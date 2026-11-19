@@ -1,14 +1,140 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Futures market structure analysis and risk planning"><title>Structure Desk | Futures workspace</title><link rel="stylesheet" href="style.css"></head><body>
-<aside class="sidebar"><a class="brand" href="./"><span class="logo">▥</span> structure<span class="muted">desk</span></a><div class="workspace">TRADING WORKSPACE</div><button class="nav active" data-view="desk">◈ <span>Market overview</span></button><button class="nav" data-view="journal">▤ <span>Saved setups</span><span id="savedCount">0</span></button><button class="nav" data-view="guide">⊞ <span>Strategy library</span></button><div class="sidebar-bottom"><span class="pill">RESEARCH MODE</span><p>Structure first.<br>Conviction second.</p><small>Analysis tools. No trade execution.</small></div></aside>
-<main><header><div class="breadcrumb">Workspace <span>/</span> <b id="viewName">Market overview</b></div><div class="header-right"><span class="sample" id="sourceBadge">● SAMPLE DATA</span><button id="guideButton" class="icon-btn" title="Strategy guide">?</button><div class="avatar">TR</div></div></header>
-<section id="desk"><div class="page-title"><div><div class="eyebrow">YOUR EDGE STARTS WITH STRUCTURE</div><h1>Market overview<span class="green">.</span></h1><p>Read the market. Build a plan. Manage your risk.</p></div><button class="secondary" id="importButton">↥ Import candles</button><input type="file" id="file" accept=".csv" hidden></div>
-<div class="toolbar"><label>Contract <select id="contract"><option value="BTCUSDT">BTC / USDT</option><option value="ETHUSDT">ETH / USDT</option><option value="SOLUSDT">SOL / USDT</option><option value="BNBUSDT">BNB / USDT</option></select></label><span class="perp">PERPETUAL</span><div class="timeframes" id="timeframes"><button data-tf="5m">5m</button><button data-tf="15m">15m</button><button data-tf="1h" class="selected">1H</button><button data-tf="4h">4H</button><button data-tf="1d">1D</button></div><select id="dataMode" aria-label="Data source"><option value="demo">Sample data</option><option value="live">Binance futures</option></select><button class="primary" id="analyze">Analyze market</button></div>
-<div id="message" role="status">Sample candles are simulated and do not represent current market prices.</div>
-<div class="metrics"><div><span>LAST CLOSED PRICE</span><strong id="lastPrice">—</strong><small id="change">—</small></div><div><span>MARKET STRUCTURE</span><strong id="trend">—</strong><small>Confirmed swing direction</small></div><div><span>RANGE POSITION</span><strong id="range">—</strong><small id="rangeNote">—</small></div><div><span>VOLATILITY · ATR (14)</span><strong id="atr">—</strong><small>Average true range</small></div></div>
-<div class="main-grid"><section class="panel chart-panel"><div class="panel-head"><div><b id="chartTitle">Bitcoin / Tether</b><span class="tag">USDⓈ-M</span><p id="chartMeta">1H · Closed candles · UTC</p></div><span class="legend"><i></i> Bullish <i class="bear"></i> Bearish</span></div><div class="overlays"><label><input id="zones" type="checkbox" checked> OB / FVG zones</label><label><input id="levels" type="checkbox" checked> Entry / TP / SL</label><span id="candleCount"></span></div><div id="chart" role="img" aria-label="Candlestick chart with detected zones and trade planning levels"></div><div class="chart-foot"><span id="candleInfo">Hover a candle to inspect OHLC</span><span>STRUCTURE DESK</span></div></section>
-<section class="panel setup"><div class="panel-head"><b>Trade setup</b><span class="tag">RULE BASED</span></div><div class="bias" id="bias">—</div><p id="reason">—</p><div class="confluence"><span>Directional confluence</span><b id="score">—</b></div><div class="scorebar"><div id="scorebar"></div></div><small class="dim">Rule agreement, not a win probability</small><div id="tradeLevels"></div><div class="risk-reward"><span>Target reward / risk</span><strong>2.00 R</strong></div><button class="primary full" id="save">Save setup</button><small class="disclaimer">Conditional research plan. Wait for confirmation at entry. Stops can slip; losses may exceed your planned risk.</small></section></div>
-<div class="lower-grid"><section class="panel"><div class="panel-head"><div><b>Structure signals</b><p>The evidence behind your setup</p></div><span class="tag" id="signalsCount">—</span></div><div id="signals"></div></section><section class="panel calculator"><div class="panel-head"><div><b>Position planner</b><p>Define your downside before your entry.</p></div><span>⚖</span></div><div class="fields"><label>Account balance · USDT<input id="balance" type="number" min="1" value="10000"></label><label>Risk per trade · %<input id="risk" type="number" min="0.1" max="5" step="0.1" value="1"></label><label>Leverage · ×<input id="leverage" type="number" min="1" max="125" value="5"></label><label>Round-trip fees · %<input id="fees" type="number" min="0" max="5" step="0.01" value="0.1"></label></div><div id="sizing"></div><small class="disclaimer">Linear USDT contracts only. Fees included; funding, slippage and maintenance margin excluded. Leverage changes margin, not stop risk. Verify liquidation and contract rules on your exchange.</small></section></div>
-<footer><span>Research with clarity. Trade with discipline.</span><span>Educational analysis · No guaranteed outcomes</span></footer></section>
-<section id="journal" hidden><div class="page-title"><div><div class="eyebrow">YOUR RESEARCH JOURNAL</div><h1>Saved setups<span class="green">.</span></h1><p>Local snapshots of your analysis. Stored in this browser.</p></div><button class="secondary" id="export">Export JSON</button></div><div id="savedList"></div></section>
-<section id="guide" hidden><div class="page-title"><div><div class="eyebrow">THE ANALYSIS FRAMEWORK</div><h1>Strategy library<span class="green">.</span></h1><p>Transparent heuristics. Understand every signal.</p></div></div><div class="panel guide-intro">This tool identifies price patterns; it does not predict certainty. Swings require two closed candles on each side. Signals describe the latest 20 candles unless stated. Entry uses the nearest active zone in the directional bias; stop sits beyond its edge and the latest swing with a 0.25 ATR buffer. Targets are 1R and 2R. A setup needs at least three aligned factors and must remain within 2 ATR of entry; otherwise it is marked Wait. The model is not backtested or calibrated. Sample results are illustrative.</div><div id="library"></div><p class="dim">Market data schema: <a href="https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Kline-Candlestick-Data" target="_blank" rel="noreferrer">Binance Futures Kline API</a>. Data availability depends on exchange and regional restrictions.</p></section>
-</main><div id="toast" role="status"></div><script src="engine.js"></script><script src="app.js"></script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Futures market structure analysis and risk planning">
+<title>Structure Desk | Futures workspace</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<aside class="sidebar">
+  <a class="brand" href="./"><span class="logo">▥</span> structure<span class="muted">desk</span></a>
+  <div class="workspace">TRADING WORKSPACE</div>
+  <button class="nav active" data-view="desk">◈ <span>Market overview</span></button>
+  <button class="nav" data-view="journal">▤ <span>Saved setups</span><span id="savedCount">0</span></button>
+  <button class="nav" data-view="guide">⊞ <span>Strategy library</span></button>
+  <div class="sidebar-bottom"><span class="pill">RESEARCH MODE</span><p>Structure first.<br>Conviction second.</p><small>Analysis tools. No trade execution.</small></div>
+</aside>
+
+<main>
+<header>
+  <div class="breadcrumb">Workspace <span>/</span> <b id="viewName">Market overview</b></div>
+  <div class="header-right"><span class="sample" id="sourceBadge">● SAMPLE DATA</span><button id="guideButton" class="icon-btn" title="Strategy guide">?</button><div class="avatar">TR</div></div>
+</header>
+
+<section id="desk">
+  <div class="page-title">
+    <div><div class="eyebrow">YOUR EDGE STARTS WITH STRUCTURE</div><h1>Market overview<span class="green">.</span></h1><p>Read the market. Build a plan. Manage your risk.</p></div>
+    <button class="secondary" id="importButton">↥ Import candles</button><input type="file" id="file" accept=".csv" hidden>
+  </div>
+
+  <div class="toolbar">
+    <label>Contract <input id="contract" type="text" value="BTCUSDT" placeholder="e.g. SOLUSDT" aria-label="USDT futures contract symbol" list="contractSuggestions" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="34">
+      <datalist id="contractSuggestions"><option value="BTCUSDT"><option value="ETHUSDT"><option value="SOLUSDT"><option value="BNBUSDT"><option value="XRPUSDT"><option value="DOGEUSDT"><option value="ETCUSDT"></datalist></label>
+    <span class="perp">PERPETUAL</span>
+    <div class="timeframes" id="timeframes"><button data-tf="5m">5m</button><button data-tf="15m">15m</button><button data-tf="1h" class="selected">1H</button><button data-tf="4h">4H</button><button data-tf="1d">1D</button></div>
+    <select id="dataMode" aria-label="Data source"><option value="demo">Sample data</option><option value="live">Binance futures</option></select>
+    <button class="primary" id="analyze">Analyze market</button>
+  </div>
+  <div id="message" role="status">Sample candles are simulated and do not represent current market prices.</div>
+
+  <div class="metrics">
+    <div><span>LAST CLOSED PRICE</span><strong id="lastPrice">—</strong><small id="change">—</small></div>
+    <div><span>MARKET STRUCTURE</span><strong id="trend">—</strong><small id="htfNote">—</small></div>
+    <div><span>RANGE POSITION</span><strong id="range">—</strong><div class="meter" aria-hidden="true"><i id="rangeMarker"></i></div><small id="rangeNote">—</small></div>
+    <div><span>VOLATILITY · ATR (14)</span><strong id="atr">—</strong><small id="atrNote">Wilder average true range</small></div>
+    <div><span>MOMENTUM · RSI (14)</span><strong id="rsi">—</strong><small id="rsiNote">—</small></div>
+  </div>
+
+  <div class="main-grid">
+    <div class="left-col">
+    <section class="panel chart-panel">
+      <div class="panel-head">
+        <div><b id="chartTitle">BTCUSDT</b><span class="tag">USDⓈ-M</span><p id="chartMeta">1H · Closed candles · UTC</p></div>
+        <div class="zoom" id="zoom" role="group" aria-label="Visible candles"><button data-bars="60">60</button><button data-bars="120" class="selected">120</button><button data-bars="200">200</button></div>
+      </div>
+      <div class="overlays">
+        <label><input id="zones" type="checkbox" checked> Zones</label>
+        <label><input id="levels" type="checkbox" checked> Plan</label>
+        <label><input id="structure" type="checkbox" checked> Structure</label>
+        <label><input id="emas" type="checkbox" checked> EMA <i class="sw e20"></i>20 <i class="sw e50"></i>50</label>
+        <label><input id="volume" type="checkbox" checked> Volume</label>
+        <span id="candleCount"></span>
+      </div>
+      <div id="chart" role="img" aria-label="Candlestick chart with detected zones, structure breaks and trade planning levels"></div>
+      <div class="chart-foot"><span id="candleInfo">Hover the chart to inspect a candle</span><span>STRUCTURE DESK</span></div>
+    </section>
+    <section class="panel wf-panel">
+      <div class="panel-head"><div><b>Walk-forward check</b><p>How these exact rules played out on the loaded history</p></div><span class="tag">1R / TARGET</span></div>
+      <div id="backtest"><p class="pad">Run an analysis to replay the rules.</p></div>
+      <small class="disclaimer">Replays the rules on every 3rd candle using only data available at that time. Entry must fill within 12 candles; trades resolve within 48. Same-candle stop and target counts as a loss. In-sample, fee-free and small — treat as a sanity check, not a forecast.</small>
+    </section>
+    </div>
+
+    <section class="panel setup">
+      <div class="panel-head"><b>Trade setup</b><span class="grade" id="grade">—</span></div>
+      <div class="bias" id="bias">—</div>
+      <p id="reason">—</p>
+      <div class="tug" aria-label="Bullish versus bearish points">
+        <div class="tug-labels"><span>Bull <b id="bullPts">—</b></span><span>Confluence <b id="score">—</b></span><span><b id="bearPts">—</b> Bear</span></div>
+        <div class="tug-bar"><div id="bullBar"></div><div id="bearBar"></div></div>
+        <small class="dim">Weighted rule agreement, not a win probability</small>
+      </div>
+      <div id="tradeLevels"></div>
+      <div class="risk-reward"><span>Reward / risk to target</span><strong id="rr">—</strong></div>
+      <small class="target-note" id="targetNote"></small>
+      <div class="checklist-head">Setup checklist <span id="gateCount"></span></div>
+      <ul id="gates" class="gates"></ul>
+      <div id="cautions"></div>
+      <button class="primary full" id="save">Save setup</button>
+      <small class="disclaimer">Conditional research plan. Wait for confirmation at entry. Stops can slip; losses may exceed your planned risk.</small>
+    </section>
+  </div>
+
+  <div class="analysis-grid">
+    <section class="panel">
+      <div class="panel-head"><div><b>Confluence breakdown</b><p>How each weighted factor votes</p></div><span class="tag" id="factorTotal">—</span></div>
+      <div id="factors"></div>
+    </section>
+    <section class="panel">
+      <div class="panel-head"><div><b>Structure signals</b><p>Pattern evidence from the last 20 candles</p></div><span class="tag" id="signalsCount">—</span></div>
+      <div id="signals"></div>
+      <button class="link-btn" id="toggleSignals">Show undetected patterns</button>
+    </section>
+    <section class="panel calculator">
+      <div class="panel-head"><div><b>Position planner</b><p>Define your downside before your entry.</p></div><span>⚖</span></div>
+      <div class="fields">
+        <label>Account balance · USDT<input id="balance" type="number" min="1" value="10000"></label>
+        <label>Risk per trade · %<input id="risk" type="number" min="0.1" max="5" step="0.1" value="1"></label>
+        <label>Leverage · ×<input id="leverage" type="number" min="1" max="125" value="5"></label>
+        <label>Round-trip fees · %<input id="fees" type="number" min="0" max="5" step="0.01" value="0.1"></label>
+      </div>
+      <div id="sizing"></div>
+      <small class="disclaimer">Linear USDT contracts only. Fees included; funding, slippage and maintenance margin excluded. Leverage changes margin, not stop risk. Verify liquidation and contract rules on your exchange.</small>
+    </section>
+  </div>
+
+  <footer><span>Research with clarity. Trade with discipline.</span><span>Educational analysis · No guaranteed outcomes</span></footer>
+</section>
+
+<section id="journal" hidden>
+  <div class="page-title"><div><div class="eyebrow">YOUR RESEARCH JOURNAL</div><h1>Saved setups<span class="green">.</span></h1><p>Local snapshots of your analysis. Stored in this browser.</p></div><button class="secondary" id="export">Export JSON</button></div>
+  <div id="savedList"></div>
+</section>
+
+<section id="guide" hidden>
+  <div class="page-title"><div><div class="eyebrow">THE ANALYSIS FRAMEWORK</div><h1>Strategy library<span class="green">.</span></h1><p>Transparent heuristics. Understand every signal.</p></div></div>
+  <div class="panel guide-intro">This tool identifies price patterns; it does not predict certainty. Swings require two closed candles on each side. Eight weighted factors (max 10 points) vote bullish or bearish; the larger side sets the bias. Entry is the midpoint of the best aligned, unmitigated zone (nearest, freshest, with OB/FVG overlap preferred). The stop sits beyond the zone edge with a 0.25 ATR buffer. The target is the nearest untaken opposing swing (liquidity), falling back to 2R. A setup is only marked actionable when all six checklist gates pass; otherwise it is <b>Wait</b>. The walk-forward check replays the rules on the loaded history — it is in-sample and not a calibrated probability.</div>
+  <h2 class="section-h">Weighted factors</h2>
+  <div id="factorLibrary" class="panel"></div>
+  <h2 class="section-h">Pattern definitions</h2>
+  <div id="library"></div>
+  <p class="dim">Market data schema: <a href="https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Kline-Candlestick-Data" target="_blank" rel="noreferrer">Binance Futures Kline API</a>. Data availability depends on exchange and regional restrictions.</p>
+</section>
+</main>
+<div id="toast" role="status"></div>
+<script src="engine.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
